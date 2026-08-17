@@ -1,4 +1,8 @@
-🛠️ Format-Fixer: The Frictionless Utility Hub
+<div align="center">
+
+# 🛠️ Format-Fixer: The Frictionless Utility Hub
+
+</div>
 
     Built for the Hack Club Stardance "Frictionless" Mission
 A 100% client-side, privacy-first image converter, PDF merger, and text sanitizer.
