@@ -19,7 +19,7 @@ To hit the core requirements of the Frictionless mission, this project focuses h
 
     👁️ Live Instant Preview: The Text Sanitizer completely eliminates the "Submit" button. As you paste or type messy text on the left, it is sanitized, formatted, and ready to copy instantly on the right.
 
-✨ Core Features
+## ✨ Core Features
 
     🖼️ Universal Image Converter: Drag and drop images to instantly convert between PNG, JPG, and WebP formats. Includes real-time compression quality sliders.
 
@@ -29,7 +29,7 @@ To hit the core requirements of the Frictionless mission, this project focuses h
 
     💅 Glassmorphism UI: A sleek, modern, and responsive user interface featuring satisfying animations and a clean aesthetic that makes utility work feel premium.
 
-📂 Project Architecture
+## 📂 Project Architecture
 
 The project is built entirely with vanilla web technologies to ensure maximum performance and portability. No application backend or analytics. User files are processed locally in the browser.
 
@@ -39,7 +39,7 @@ External Libraries Used (via CDN):
 
     SortableJS - For buttery-smooth drag-and-drop image reordering.
 
-🚀 Getting Started
+## 🚀 Getting Started
 
 Because this project relies entirely on client-side execution, getting started is completely frictionless. No Node.js, no npm install, and no environment variables required.
 Prerequisites
@@ -48,7 +48,7 @@ Prerequisites
 
     (Optional but recommended) VS Code with the "Live Server" extension for local development.
 
-Installation & Run Commands:
+## Installation & Run Commands:
 
 For this project, installation can be ridiculously simple because you genuinely don't need Node/npm.
 
@@ -67,7 +67,7 @@ Or, if you want the recommended development method:
 Open the project in VS Code → right-click index.html → Open with Live Server
 
 
-How It Works
+## How It Works
 
 Image Converter
 
