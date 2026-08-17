@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Format Fixer — Universal Local Converter & Text Sanitizer</title>
+  <link rel="icon" type="image/png" href="image.png">
+  <meta name="description"
+    content="A 100% client-side, privacy-first universal file converter and text sanitizer. Convert images, merge to PDF, and clean messy text — all locally in your browser.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Third-party Libraries (CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.6/Sortable.min.js"></script>
+
+  <!-- Our Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- Initial One-Time Loader -->
+  <div id="initial-loader" class="initial-loader">
+    <div class="loader-content">
+      <div class="spinner"></div>
+      <h2 class="loader-title">Preparing Your Secure Workspace...</h2>
+      <p class="loader-text">Loading local engines. 0% data leaves your device.</p>
+    </div>
+  </div>
+
+  <!-- Ambient Lava Lamp Background -->
+  <div class="lava-lamp">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+  </div>
+
+  <div class="app">
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- HEADER                                            -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <header class="header">
+      <div class="privacy-badge">
+        <span class="dot"></span>
+        <span class="lock-icon">🔒</span>
+        100% Local Processing — Your files never leave your device
+      </div>
+      <h1>Format Fixer</h1>
+      <p>Convert images, merge to PDF, and sanitize messy text — instantly, privately, right in your browser.</p>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- QoL FEATURE CARDS                                 -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div class="qol-grid">
+      <div class="qol-card">
+        <span class="qol-icon">⚡</span>
+        <h3>Zero-Upload Privacy</h3>
+        <p>Files are processed locally using HTML5 Canvas. Nothing is ever uploaded to any server.</p>
+      </div>
+      <div class="qol-card">
+        <span class="qol-icon">🔀</span>
+        <h3>Drag & Drop Reorder</h3>
+        <p>See your images, then drag to rearrange the page order before merging into a PDF.</p>
+      </div>
+      <div class="qol-card">
+        <span class="qol-icon">👁️</span>
+        <h3>Live Instant Preview</h3>
+        <p>Text cleaning and format conversions happen live on-screen — no submit buttons needed.</p>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- TAB NAVIGATION                                    -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" data-tab="converter" role="tab" aria-selected="true" id="tab-converter"
+        title="Convert single images to JPG, PNG, or WebP format.">
+        <span class="tab-icon">🔄</span>
+        <span class="tab-label">Image Converter</span>
+        <span class="tab-label-short">Convert</span>
+      </button>
+      <button class="tab-btn" data-tab="pdf" role="tab" aria-selected="false" id="tab-pdf"
+        title="Combine multiple images into a single multi-page PDF document.">
+        <span class="tab-icon">📄</span>
+        <span class="tab-label">Image → PDF</span>
+        <span class="tab-label-short">PDF</span>
+      </button>
+      <button class="tab-btn" data-tab="sanitizer" role="tab" aria-selected="false" id="tab-sanitizer"
+        title="Instantly clean up messy text, spacing, and formatting.">
+        <span class="tab-icon">🧹</span>
+        <span class="tab-label">Text Sanitizer</span>
+        <span class="tab-label-short">Text</span>
+      </button>
+    </nav>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- TAB 1: IMAGE CONVERTER                            -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <section class="tab-panel active" id="panel-converter" role="tabpanel" aria-labelledby="tab-converter">
+      <div class="card">
+        <div class="card-title">🖼️ Universal Image Converter</div>
+        <div class="card-subtitle">Drop an image and instantly convert between JPG, PNG, and WebP formats.</div>
+
+        <!-- Drop zone -->
+        <div class="drop-zone" id="converter-dropzone">
+          <span class="dz-icon">📁</span>
+          <div class="dz-text">Drag & drop an image here, or click to browse</div>
+          <div class="dz-hint">Supports JPG, PNG, WebP</div>
+          <input type="file" id="converter-file-input" accept="image/jpeg,image/png,image/webp">
+        </div>
+
+        <!-- Conversion controls (hidden until an image is loaded) -->
+        <div class="controls-row" id="converter-controls" style="display:none;">
+          <div class="control-group">
+            <label for="output-format">Output Format</label>
+            <select id="output-format" title="Select the target format for your image">
+              <option value="image/jpeg">JPG</option>
+              <option value="image/png">PNG</option>
+              <option value="image/webp">WebP</option>
+            </select>
+          </div>
+          <div class="control-group" id="quality-group">
+            <label>Quality: <span class="quality-value" id="quality-label">92%</span></label>
+            <input type="range" id="quality-slider" min="10" max="100" value="92"
+              title="Adjust the compression quality (lower is smaller file size, higher is better looks)">
+          </div>
+          <div class="control-group" style="flex:1;"></div>
+          <button class="btn btn-primary" id="convert-btn" title="Convert the image and save it to your computer">💾
+            Convert & Download</button>
+        </div>
+
+        <!-- Original vs Converted preview -->
+        <div class="preview-area" id="converter-preview">
+          <div class="preview-grid">
+            <div class="preview-box">
+              <div class="preview-label">Original</div>
+              <img id="preview-original" alt="Original image">
+              <div class="file-info">
+                <span id="original-name"></span>
+                <span id="original-size" class="size"></span>
+                <span id="original-dimensions"></span>
+              </div>
+            </div>
+            <div class="preview-box">
+              <div class="preview-label">Converted</div>
+              <img id="preview-converted" alt="Converted image">
+              <div class="file-info">
+                <span id="converted-format"></span>
+                <span id="converted-size" class="size"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- TAB 2: IMAGE → PDF                                -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <section class="tab-panel" id="panel-pdf" role="tabpanel" aria-labelledby="tab-pdf">
+      <div class="card">
+        <div class="card-title">📄 Image to PDF Merger</div>
+        <div class="card-subtitle">Drop multiple images, reorder them visually, and merge into a single multi-page PDF.
+        </div>
+
+        <!-- Drop zone (multi-file) -->
+        <div class="drop-zone" id="pdf-dropzone">
+          <span class="dz-icon">📂</span>
+          <div class="dz-text">Drag & drop images here, or click to browse</div>
+          <div class="dz-hint">Supports JPG, PNG, WebP — add multiple files at once</div>
+          <input type="file" id="pdf-file-input" accept="image/jpeg,image/png,image/webp" multiple>
+        </div>
+
+        <!-- Sortable grid + controls (hidden until images are added) -->
+        <div class="pdf-grid-container" id="pdf-grid-container">
+          <div class="pdf-grid-header">
+            <span class="count">📑 <span id="pdf-count">0</span> images loaded — drag to reorder</span>
+            <button class="btn btn-danger btn-sm" id="pdf-clear-btn" style="padding:8px 16px; font-size:0.78rem;">✕
+              Clear All</button>
+          </div>
+          <div class="pdf-grid" id="pdf-grid"></div>
+
+          <div class="controls-row" style="margin-bottom:20px;">
+            <div class="control-group">
+              <label for="pdf-page-size">Page Size</label>
+              <select id="pdf-page-size" title="Choose the paper size for the generated PDF document">
+                <option value="a4">A4</option>
+                <option value="letter">Letter</option>
+                <option value="legal">Legal</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label for="pdf-orientation">Orientation</label>
+              <select id="pdf-orientation"
+                title="Choose the page orientation (Auto will adapt to each image's dimensions)">
+                <option value="portrait">Portrait</option>
+                <option value="landscape">Landscape</option>
+                <option value="auto">Auto (per image)</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label for="pdf-margin">Margin</label>
+              <select id="pdf-margin" title="Add white space around the images on the PDF pages">
+                <option value="10">Normal (10mm)</option>
+                <option value="5">Slim (5mm)</option>
+                <option value="0">None</option>
+                <option value="20">Wide (20mm)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="pdf-actions">
+            <button class="btn btn-primary btn-lg" id="generate-pdf-btn"
+              title="Merge all loaded images into a single PDF and download it">📄 Generate PDF</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- TAB 3: TEXT SANITIZER                              -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <section class="tab-panel" id="panel-sanitizer" role="tabpanel" aria-labelledby="tab-sanitizer">
+      <div class="card">
+        <div class="card-title">✨ Live Text Sanitizer</div>
+        <div class="card-subtitle">Paste messy text on the left and watch it get cleaned instantly on the right.</div>
+
+        <!-- Toggleable cleaning options -->
+        <div class="sanitizer-options" id="sanitizer-options">
+          <label class="option-chip active" data-option="extraSpaces"
+            title="Replaces 2 or more consecutive spaces with a single space.">
+            <input type="checkbox" checked> <span class="chip-dot"></span> Remove extra spaces
+          </label>
+          <label class="option-chip active" data-option="markdown"
+            title="Removes common Markdown formatting characters like asterisks, hashes, and underscores.">
+            <input type="checkbox" checked> <span class="chip-dot"></span> Strip AI/Markdown
+          </label>
+          <label class="option-chip active" data-option="lineBreaks"
+            title="Collapses excessive blank lines into a single blank line.">
+            <input type="checkbox" checked> <span class="chip-dot"></span> Fix line breaks
+          </label>
+          <label class="option-chip active" data-option="invisibleChars"
+            title="Strips out hidden zero-width characters and control codes.">
+            <input type="checkbox" checked> <span class="chip-dot"></span> Remove invisible chars
+          </label>
+          <label class="option-chip active" data-option="trimLines"
+            title="Removes leading and trailing spaces from the beginning and end of each line.">
+            <input type="checkbox" checked> <span class="chip-dot"></span> Trim line whitespace
+          </label>
+          <label class="option-chip active" data-option="smartQuotes"
+            title="Converts curly smart quotes (“”) into standard straight quotes (&quot;).">
+            <input type="checkbox" checked> <span class="chip-dot"></span> Normalize quotes & dashes
+          </label>
+        </div>
+
+        <!-- Split pane: input on left, output on right -->
+        <div class="split-pane">
+          <div class="pane">
+            <div class="pane-header">
+              <span class="pane-label">📥 Input (paste or type)</span>
+              <span class="pane-stats" id="input-stats">
+                <span>0</span> chars · <span>0</span> words
+              </span>
+            </div>
+            <textarea id="sanitizer-input"
+              placeholder="Paste your messy text here...&#10;&#10;For example:&#10;**Bold markdown** that shouldn't be bold&#10;Multiple   spaces    everywhere&#10;Weird  'smart quotes'  and  —em dashes—&#10;&#10;&#10;Too many blank lines..."></textarea>
+          </div>
+          <div class="pane">
+            <div class="pane-header">
+              <span class="pane-label">📤 Cleaned Output</span>
+              <span class="pane-stats" id="output-stats">
+                <span>0</span> chars · <span>0</span> words
+              </span>
+            </div>
+            <textarea id="sanitizer-output" class="output" readonly
+              placeholder="Clean output will appear here instantly..."></textarea>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="copy-section">
+          <button class="btn btn-success btn-copy-mega" id="copy-btn" title="Copy the cleaned text to your clipboard">📋
+            Copy Clean Text to Clipboard</button>
+          <button class="btn btn-ghost" id="clear-text-btn" title="Clear both text areas">🗑️ Clear</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- FOOTER                                            -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <footer class="footer">
+      <p>Built with <span class="heart">♥</span> for the <strong>Frictionless</strong> Hackathon · 100% client-side ·
+        Zero tracking</p>
+    </footer>
+
+  </div>
+
+  <!-- Toast notification container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Our JavaScript (loaded after the DOM) -->
+  <script src="script.js"></script>
+
+</body>
+
+</html>
