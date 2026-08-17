@@ -3,6 +3,9 @@
     Built for the Hack Club Stardance "Frictionless" Mission
 A 100% client-side, privacy-first image converter, PDF merger, and text sanitizer.
 
+✨why i think its usable:
+i used to get anxiety about my data getting stolen while trying to change my private photos , ID's into pdf etc, so i build this website where your data never leave your browser for a sec and it also fastens the results that your photo/files gets instantly changed and you dont have to wait for traditional crappy servers to load.
+
 The internet is full of repetitive tasks and awkward workflows. Format-Fixer is designed to remove the friction from your daily digital life. Convert images, merge documents into PDFs, and instantly clean up messy text formatting—all locally in your browser. Your data never leaves your device.
 
 Built with guidance from Antigravity, Hack Club Guides, and Google Gemini.
