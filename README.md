@@ -52,6 +52,7 @@ For this project, installation can be ridiculously simple because you genuinely 
 Something like:
 
 git clone https://github.com/YOUR_USERNAME/format-fixer.git
+
 cd format-fixer
 
 Then:
