@@ -2,30 +2,6 @@
    FORMAT FIXER — JAVASCRIPT
    ══════════════════════════════════════════════════════ */
 
-// ══════════════════════════════════════════════════════
-//  INITIAL ONE-TIME LOADER LOGIC
-// ══════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  const loader = document.getElementById('initial-loader');
-  if (!loader) return;
-
-  const hasVisited = localStorage.getItem('formatFixer_visited');
-
-  if (!hasVisited) {
-    // First time: Show loader for 1.2s, then fade out
-    setTimeout(() => {
-      loader.classList.add('fade-out');
-      setTimeout(() => {
-        loader.style.display = 'none';
-      }, 600); // match CSS transition
-    }, 1200);
-    localStorage.setItem('formatFixer_visited', 'true');
-  } else {
-    // Returning user: Hide immediately
-    loader.style.display = 'none';
-  }
-});
-
 // ─────────────────────────────────────────────────────
 //  SECTION 1: UTILITY HELPERS & TOAST SYSTEM
 // ─────────────────────────────────────────────────────
@@ -102,29 +78,89 @@ function setupDropZone(zoneEl, inputEl, onFiles) {
 }
 
 // ─────────────────────────────────────────────────────
-//  SECTION 2: TAB SWITCHING
+//  SECTION 2: LANDING SCREEN & ROUTING
 // ─────────────────────────────────────────────────────
 
-document.querySelectorAll(".tab-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    // Deactivate all tabs
-    document.querySelectorAll(".tab-btn").forEach((b) => {
-      b.classList.remove("active");
-      b.setAttribute("aria-selected", "false");
-    });
-    document
-      .querySelectorAll(".tab-panel")
-      .forEach((p) => p.classList.remove("active"));
+const landingScreen = document.getElementById("landing-screen");
+const appRoot = document.querySelector(".app");
 
-    // Activate the clicked tab
-    btn.classList.add("active");
-    btn.setAttribute("aria-selected", "true");
-    document.getElementById(`panel-${btn.dataset.tab}`).classList.add("active");
+function setAppMode(mode) {
+  const photoTabs = document.querySelectorAll(".tab-btn[data-photo-tab='true']");
+  const textTab = document.getElementById("tab-sanitizer");
+  const photoPanels = document.querySelectorAll(".tab-panel:not(#panel-sanitizer)");
+  const textPanel = document.getElementById("panel-sanitizer");
+
+  const isPhotoMode = mode === "photo";
+
+  photoTabs.forEach((tab) => tab.classList.toggle("hidden", !isPhotoMode));
+  photoPanels.forEach((panel) => panel.classList.toggle("hidden", !isPhotoMode));
+
+  textTab.classList.toggle("hidden", isPhotoMode);
+  textPanel.classList.toggle("hidden", isPhotoMode);
+
+  if (isPhotoMode) {
+    const firstPhotoTab = document.querySelector(".tab-btn[data-photo-tab='true']");
+    if (firstPhotoTab) {
+      firstPhotoTab.click();
+    }
+  } else {
+    textTab.classList.add("active");
+    textTab.setAttribute("aria-selected", "true");
+    textPanel.classList.add("active");
+
+    document.querySelectorAll(".tab-btn[data-photo-tab='true']").forEach((tab) => {
+      tab.classList.remove("active");
+      tab.setAttribute("aria-selected", "false");
+    });
+  }
+
+  landingScreen.classList.add("hidden");
+  appRoot.classList.add("visible");
+  appRoot.style.display = "block";
+}
+
+document.querySelectorAll(".landing-card").forEach((card) => {
+  card.addEventListener("click", () => setAppMode(card.dataset.mode));
+  card.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      setAppMode(card.dataset.mode);
+    }
   });
 });
 
 // ─────────────────────────────────────────────────────
-//  SECTION 3: IMAGE CONVERTER  (Tab 1)
+//  SECTION 3: TAB SWITCHING
+// ─────────────────────────────────────────────────────
+
+document.querySelectorAll(".tab-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    if (btn.classList.contains("hidden")) return;
+
+    document.querySelectorAll(".tab-btn").forEach((b) => {
+      if (!b.classList.contains("hidden")) {
+        b.classList.remove("active");
+        b.setAttribute("aria-selected", "false");
+      }
+    });
+    document.querySelectorAll(".tab-panel").forEach((p) => {
+      if (!p.classList.contains("hidden")) {
+        p.classList.remove("active");
+      }
+    });
+
+    btn.classList.add("active");
+    btn.setAttribute("aria-selected", "true");
+
+    const targetPanel = document.getElementById(`panel-${btn.dataset.tab}`);
+    if (targetPanel && !targetPanel.classList.contains("hidden")) {
+      targetPanel.classList.add("active");
+    }
+  });
+});
+
+// ─────────────────────────────────────────────────────
+//  SECTION 4: IMAGE CONVERTER  (Tab 1)
 //
 //  Flow: User drops an image → we read it as a Data URL
 //  → draw onto an HTML5 Canvas → use canvas.toBlob() to
@@ -227,6 +263,38 @@ function autoConvert() {
   const quality = parseInt(qualitySlider.value) / 100;
   const img = converterState.imgEl;
 
+  // ── Handle SVG Vector Conversion ──
+  if (format === "image/svg+xml") {
+    // Hide quality slider for vectors
+    document.getElementById("quality-group").style.display = "none";
+
+    // Use ImageTracer to convert the image to SVG
+    ImageTracer.imageToSVG(
+      converterState.originalDataURL,
+      function (svgString) {
+        // Convert SVG string to Blob
+        const blob = new Blob([svgString], { type: "image/svg+xml" });
+        const url = URL.createObjectURL(blob);
+
+        // Update preview
+        document.getElementById("preview-converted").src = url;
+        document.getElementById("converted-format").textContent = "SVG format";
+        document.getElementById("converted-size").textContent = formatBytes(
+          blob.size
+        );
+
+        // Store for download
+        converterState.convertedBlob = blob;
+        converterState.convertedExt = "svg";
+      },
+      "default"
+    );
+    return; // Exit early, skip canvas conversion
+  }
+
+  // Show quality slider for raster formats
+  document.getElementById("quality-group").style.display = "flex";
+
   // Create an off-screen canvas at the image's native resolution
   const canvas = document.createElement("canvas");
   canvas.width = img.naturalWidth;
@@ -289,7 +357,7 @@ document.getElementById("convert-btn").addEventListener("click", () => {
 });
 
 // ─────────────────────────────────────────────────────
-//  SECTION 4: IMAGE → PDF  (Tab 2)
+//  SECTION 5: IMAGE → PDF  (Tab 2)
 //
 //  Flow: User drops multiple images → thumbnails appear in
 //  a sortable grid (SortableJS) → user reorders → clicks
@@ -516,7 +584,7 @@ document.getElementById("generate-pdf-btn").addEventListener("click", () => {
 });
 
 // ─────────────────────────────────────────────────────
-//  SECTION 5: TEXT SANITIZER  (Tab 3)
+//  SECTION 6: TEXT SANITIZER  (Tab 4)
 //
 //  A split-pane editor: the user types or pastes messy
 //  text on the left, and a live-cleaned version appears
@@ -687,7 +755,75 @@ document.getElementById("clear-text-btn").addEventListener("click", () => {
 });
 
 // ─────────────────────────────────────────────────────
-//  SECTION 6: INITIALIZATION
+//  SECTION 7: VECTOR CONVERTER  (Standalone)
+// ─────────────────────────────────────────────────────
+
+const vectorFileInput = document.getElementById("vector-file-input");
+const vectorDropZone = document.getElementById("vector-dropzone");
+const vectorOriginalPreview = document.getElementById("vector-original-preview");
+const vectorOutputPreview = document.getElementById("vector-output-preview");
+const downloadVectorBtn = document.getElementById("download-vector-btn");
+let vectorBlobUrl = null;
+let vectorSvgBlob = null;
+
+function renderVectorPreviewFromDataUrl(dataUrl) {
+  vectorOriginalPreview.src = dataUrl;
+  vectorOriginalPreview.style.display = "block";
+
+  ImageTracer.imageToSVG(
+    dataUrl,
+    function (svgString) {
+      const blob = new Blob([svgString], { type: "image/svg+xml" });
+      vectorSvgBlob = blob;
+
+      if (vectorBlobUrl) {
+        URL.revokeObjectURL(vectorBlobUrl);
+      }
+
+      vectorBlobUrl = URL.createObjectURL(blob);
+      vectorOutputPreview.src = vectorBlobUrl;
+      vectorOutputPreview.style.display = "block";
+    },
+    "default"
+  );
+}
+
+vectorOriginalPreview.src = "normal image example.png";
+vectorOutputPreview.src = "vector image example.png";
+
+setupDropZone(vectorDropZone, vectorFileInput, (files) => {
+  const file = files[0];
+  if (!file || !file.type.startsWith("image/")) {
+    showToast("Please drop a valid image file.", "error");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (event) => renderVectorPreviewFromDataUrl(event.target.result);
+  reader.readAsDataURL(file);
+});
+
+downloadVectorBtn.addEventListener("click", () => {
+  if (!vectorSvgBlob) {
+    showToast("Please load an image first.", "error");
+    return;
+  }
+
+  const link = document.createElement("a");
+  const fileName = (vectorFileInput.files[0]?.name || "vector-image").replace(/\.[^.]+$/, "") || "vector-image";
+  const url = URL.createObjectURL(vectorSvgBlob);
+
+  link.href = url;
+  link.download = `${fileName}.svg`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast("Vector downloaded!", "success");
+});
+
+// ─────────────────────────────────────────────────────
+//  SECTION 8: INITIALIZATION
 // ─────────────────────────────────────────────────────
 
 // Set initial stats for the text sanitizer

@@ -18,21 +18,13 @@
   <!-- Third-party Libraries (CDN) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.6/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/imagetracerjs@1.2.6/imagetracer_v1.2.6.min.js"></script>
 
   <!-- Our Styles -->
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-
-  <!-- Initial One-Time Loader -->
-  <div id="initial-loader" class="initial-loader">
-    <div class="loader-content">
-      <div class="spinner"></div>
-      <h2 class="loader-title">Preparing Your Secure Workspace...</h2>
-      <p class="loader-text">Loading local engines. 0% data leaves your device.</p>
-    </div>
-  </div>
 
   <!-- Ambient Lava Lamp Background -->
   <div class="lava-lamp">
@@ -42,59 +34,50 @@
     <div class="blob blob-4"></div>
   </div>
 
-  <div class="app">
+  <div id="landing-screen" class="landing-screen">
+    <div class="landing-card" data-mode="photo" role="button" tabindex="0" aria-label="Open photo tools">
+      <div class="landing-title">Photo</div>
+      <div class="landing-description">Allows you to deal with photos.</div>
+    </div>
+    <div class="landing-card" data-mode="text" role="button" tabindex="0" aria-label="Open text tools">
+      <div class="landing-title">Text</div>
+      <div class="landing-description">Allows to deal with text.</div>
+    </div>
+  </div>
+
+  <div class="app" style="display: none;">
 
     <!-- ══════════════════════════════════════════════════ -->
     <!-- HEADER                                            -->
     <!-- ══════════════════════════════════════════════════ -->
     <header class="header">
-      <div class="privacy-badge">
-        <span class="dot"></span>
-        <span class="lock-icon">🔒</span>
-        100% Local Processing — Your files never leave your device
-      </div>
       <h1>Format Fixer</h1>
       <p>Convert images, merge to PDF, and sanitize messy text — instantly, privately, right in your browser.</p>
     </header>
 
     <!-- ══════════════════════════════════════════════════ -->
-    <!-- QoL FEATURE CARDS                                 -->
-    <!-- ══════════════════════════════════════════════════ -->
-    <div class="qol-grid">
-      <div class="qol-card">
-        <span class="qol-icon">⚡</span>
-        <h3>Zero-Upload Privacy</h3>
-        <p>Files are processed locally using HTML5 Canvas. Nothing is ever uploaded to any server.</p>
-      </div>
-      <div class="qol-card">
-        <span class="qol-icon">🔀</span>
-        <h3>Drag & Drop Reorder</h3>
-        <p>See your images, then drag to rearrange the page order before merging into a PDF.</p>
-      </div>
-      <div class="qol-card">
-        <span class="qol-icon">👁️</span>
-        <h3>Live Instant Preview</h3>
-        <p>Text cleaning and format conversions happen live on-screen — no submit buttons needed.</p>
-      </div>
-    </div>
-
-    <!-- ══════════════════════════════════════════════════ -->
     <!-- TAB NAVIGATION                                    -->
     <!-- ══════════════════════════════════════════════════ -->
     <nav class="tab-nav" role="tablist">
-      <button class="tab-btn active" data-tab="converter" role="tab" aria-selected="true" id="tab-converter"
+      <button class="tab-btn active" data-tab="converter" data-photo-tab="true" role="tab" aria-selected="true" id="tab-converter"
         title="Convert single images to JPG, PNG, or WebP format.">
         <span class="tab-icon">🔄</span>
         <span class="tab-label">Image Converter</span>
         <span class="tab-label-short">Convert</span>
       </button>
-      <button class="tab-btn" data-tab="pdf" role="tab" aria-selected="false" id="tab-pdf"
+      <button class="tab-btn" data-tab="pdf" data-photo-tab="true" role="tab" aria-selected="false" id="tab-pdf"
         title="Combine multiple images into a single multi-page PDF document.">
         <span class="tab-icon">📄</span>
         <span class="tab-label">Image → PDF</span>
         <span class="tab-label-short">PDF</span>
       </button>
-      <button class="tab-btn" data-tab="sanitizer" role="tab" aria-selected="false" id="tab-sanitizer"
+      <button class="tab-btn" data-tab="vector" data-photo-tab="true" role="tab" aria-selected="false" id="tab-vector"
+        title="Convert raster images into SVG vectors.">
+        <span class="tab-icon">🧩</span>
+        <span class="tab-label">Vector Converter</span>
+        <span class="tab-label-short">Vector</span>
+      </button>
+      <button class="tab-btn hidden" data-tab="sanitizer" data-text-tab="true" role="tab" aria-selected="false" id="tab-sanitizer"
         title="Instantly clean up messy text, spacing, and formatting.">
         <span class="tab-icon">🧹</span>
         <span class="tab-label">Text Sanitizer</span>
@@ -126,6 +109,7 @@
               <option value="image/jpeg">JPG</option>
               <option value="image/png">PNG</option>
               <option value="image/webp">WebP</option>
+              <option value="image/svg+xml">SVG (Vector)</option>
             </select>
           </div>
           <div class="control-group" id="quality-group">
@@ -227,9 +211,43 @@
     </section>
 
     <!-- ══════════════════════════════════════════════════ -->
-    <!-- TAB 3: TEXT SANITIZER                              -->
+    <!-- TAB 3: VECTOR CONVERTER                            -->
     <!-- ══════════════════════════════════════════════════ -->
-    <section class="tab-panel" id="panel-sanitizer" role="tabpanel" aria-labelledby="tab-sanitizer">
+    <section class="tab-panel" id="panel-vector" role="tabpanel" aria-labelledby="tab-vector">
+      <div class="card">
+        <div class="card-title">🧩 Vector Converter</div>
+        <div class="card-subtitle">It allows the photo to look same and not get like stretched even when opened in every screen.</div>
+
+        <div class="drop-zone" id="vector-dropzone">
+          <span class="dz-icon">📁</span>
+          <div class="dz-text">Drag & drop an image here, or click to browse</div>
+          <div class="dz-hint">Works with JPG, PNG, and WebP images</div>
+          <input type="file" id="vector-file-input" accept="image/jpeg,image/png,image/webp">
+        </div>
+
+        <div class="preview-area visible" id="vector-preview-area">
+          <div class="preview-grid">
+            <div class="preview-box">
+              <div class="preview-label">Original</div>
+              <img id="vector-original-preview" src="normal image example.png" alt="Original vector source">
+            </div>
+            <div class="preview-box">
+              <div class="preview-label">Vector Output</div>
+              <img id="vector-output-preview" src="vector image example.png" alt="Vector output preview">
+            </div>
+          </div>
+        </div>
+
+        <div class="pdf-actions" style="margin-top: 20px;">
+          <button class="btn btn-primary btn-lg" id="download-vector-btn" title="Download the generated SVG file">⬇️ Download Vector</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- TAB 4: TEXT SANITIZER                              -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <section class="tab-panel hidden" id="panel-sanitizer" role="tabpanel" aria-labelledby="tab-sanitizer">
       <div class="card">
         <div class="card-title">✨ Live Text Sanitizer</div>
         <div class="card-subtitle">Paste messy text on the left and watch it get cleaned instantly on the right.</div>
@@ -293,6 +311,15 @@
           <button class="btn btn-ghost" id="clear-text-btn" title="Clear both text areas">🗑️ Clear</button>
         </div>
       </div>
+    </section>
+
+    <section class="card why-better" aria-label="Why this is better">
+      <div class="card-title">Why this is better:</div>
+      <ul class="why-list">
+        <li><strong>100 percent privacy:</strong> your code never leaves your browser as we use html, js libraries instead of relying on crappy servers that steal your data.</li>
+        <li><strong>drag and drop reorder:</strong> it is easier to use as you dont see ads, and links trying to scam you all around the website.</li>
+        <li><strong>live instant preview:</strong> as it changes format in seconds because we dont have to wait for crappy servers.</li>
+      </ul>
     </section>
 
     <!-- ══════════════════════════════════════════════════ -->
