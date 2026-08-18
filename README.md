@@ -1,4 +1,6 @@
-Format-fixer
+## <div align="center">
+  Format-fixer
+</div>
 
 I used to get anxious about my private photos being leaked while trying to change my ID's format from png to pdf etc so i created this website that allows the user to do many type of changes with their <b>PHOTOS </b> and text without having to worry about their data being stolen as their data never leaves their browser for even once andbecause we use HTML,JS libraries it also makes the conversion ridiculously faster the user doesn't have to wait for the crappy servers to work.
 
