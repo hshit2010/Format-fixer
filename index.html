@@ -9,24 +9,20 @@
   <meta name="description"
     content="A 100% client-side, privacy-first universal file converter and text sanitizer. Convert images, merge to PDF, and clean messy text — all locally in your browser.">
 
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet">
 
-  <!-- Third-party Libraries (CDN) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.6/Sortable.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/imagetracerjs@1.2.6/imagetracer_v1.2.6.min.js"></script>
 
-  <!-- Our Styles -->
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-  <!-- Ambient Lava Lamp Background -->
   <div class="lava-lamp">
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
@@ -47,17 +43,11 @@
 
   <div class="app" style="display: none;">
 
-    <!-- ══════════════════════════════════════════════════ -->
-    <!-- HEADER                                            -->
-    <!-- ══════════════════════════════════════════════════ -->
     <header class="header">
       <h1>Format Fixer</h1>
       <p>Convert images, merge to PDF, and sanitize messy text — instantly, privately, right in your browser.</p>
     </header>
 
-    <!-- ══════════════════════════════════════════════════ -->
-    <!-- TAB NAVIGATION                                    -->
-    <!-- ══════════════════════════════════════════════════ -->
     <nav class="tab-nav" role="tablist">
       <button class="tab-btn active" data-tab="converter" data-photo-tab="true" role="tab" aria-selected="true" id="tab-converter"
         title="Convert single images to JPG, PNG, or WebP format.">
@@ -85,15 +75,11 @@
       </button>
     </nav>
 
-    <!-- ══════════════════════════════════════════════════ -->
-    <!-- TAB 1: IMAGE CONVERTER                            -->
-    <!-- ══════════════════════════════════════════════════ -->
     <section class="tab-panel active" id="panel-converter" role="tabpanel" aria-labelledby="tab-converter">
       <div class="card">
         <div class="card-title">🖼️ Universal Image Converter</div>
         <div class="card-subtitle">Drop an image and instantly convert between JPG, PNG, and WebP formats.</div>
 
-        <!-- Drop zone -->
         <div class="drop-zone" id="converter-dropzone">
           <span class="dz-icon">📁</span>
           <div class="dz-text">Drag & drop an image here, or click to browse</div>
@@ -101,7 +87,6 @@
           <input type="file" id="converter-file-input" accept="image/jpeg,image/png,image/webp">
         </div>
 
-        <!-- Conversion controls (hidden until an image is loaded) -->
         <div class="controls-row" id="converter-controls" style="display:none;">
           <div class="control-group">
             <label for="output-format">Output Format</label>
@@ -122,7 +107,6 @@
             Convert & Download</button>
         </div>
 
-        <!-- Original vs Converted preview -->
         <div class="preview-area" id="converter-preview">
           <div class="preview-grid">
             <div class="preview-box">
@@ -147,16 +131,12 @@
       </div>
     </section>
 
-    <!-- ══════════════════════════════════════════════════ -->
-    <!-- TAB 2: IMAGE → PDF                                -->
-    <!-- ══════════════════════════════════════════════════ -->
     <section class="tab-panel" id="panel-pdf" role="tabpanel" aria-labelledby="tab-pdf">
       <div class="card">
         <div class="card-title">📄 Image to PDF Merger</div>
         <div class="card-subtitle">Drop multiple images, reorder them visually, and merge into a single multi-page PDF.
         </div>
 
-        <!-- Drop zone (multi-file) -->
         <div class="drop-zone" id="pdf-dropzone">
           <span class="dz-icon">📂</span>
           <div class="dz-text">Drag & drop images here, or click to browse</div>
@@ -164,7 +144,6 @@
           <input type="file" id="pdf-file-input" accept="image/jpeg,image/png,image/webp" multiple>
         </div>
 
-        <!-- Sortable grid + controls (hidden until images are added) -->
         <div class="pdf-grid-container" id="pdf-grid-container">
           <div class="pdf-grid-header">
             <span class="count">📑 <span id="pdf-count">0</span> images loaded — drag to reorder</span>
@@ -210,9 +189,6 @@
       </div>
     </section>
 
-    <!-- ══════════════════════════════════════════════════ -->
-    <!-- TAB 3: VECTOR CONVERTER                            -->
-    <!-- ══════════════════════════════════════════════════ -->
     <section class="tab-panel" id="panel-vector" role="tabpanel" aria-labelledby="tab-vector">
       <div class="card">
         <div class="card-title">🧩 Vector Converter</div>
@@ -244,15 +220,11 @@
       </div>
     </section>
 
-    <!-- ══════════════════════════════════════════════════ -->
-    <!-- TAB 4: TEXT SANITIZER                              -->
-    <!-- ══════════════════════════════════════════════════ -->
     <section class="tab-panel hidden" id="panel-sanitizer" role="tabpanel" aria-labelledby="tab-sanitizer">
       <div class="card">
         <div class="card-title">✨ Live Text Sanitizer</div>
         <div class="card-subtitle">Paste messy text on the left and watch it get cleaned instantly on the right.</div>
 
-        <!-- Toggleable cleaning options -->
         <div class="sanitizer-options" id="sanitizer-options">
           <label class="option-chip active" data-option="extraSpaces"
             title="Replaces 2 or more consecutive spaces with a single space.">
@@ -280,7 +252,6 @@
           </label>
         </div>
 
-        <!-- Split pane: input on left, output on right -->
         <div class="split-pane">
           <div class="pane">
             <div class="pane-header">
@@ -304,7 +275,6 @@
           </div>
         </div>
 
-        <!-- Action buttons -->
         <div class="copy-section">
           <button class="btn btn-success btn-copy-mega" id="copy-btn" title="Copy the cleaned text to your clipboard">📋
             Copy Clean Text to Clipboard</button>
@@ -322,9 +292,6 @@
       </ul>
     </section>
 
-    <!-- ══════════════════════════════════════════════════ -->
-    <!-- FOOTER                                            -->
-    <!-- ══════════════════════════════════════════════════ -->
     <footer class="footer">
       <p>Built with <span class="heart">♥</span> for the <strong>Frictionless</strong> Hackathon · 100% client-side ·
         Zero tracking</p>
@@ -332,10 +299,8 @@
 
   </div>
 
-  <!-- Toast notification container -->
   <div class="toast-container" id="toast-container"></div>
 
-  <!-- Our JavaScript (loaded after the DOM) -->
   <script src="script.js"></script>
 
 </body>
