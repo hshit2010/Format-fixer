@@ -4,15 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Format Fixer — Universal Local Converter & Text Sanitizer</title>
+  <title>Format Fixer - small local file tools</title>
   <link rel="icon" type="image/png" href="image.png">
   <meta name="description"
     content="A 100% client-side, privacy-first universal file converter and text sanitizer. Convert images, merge to PDF, and clean messy text — all locally in your browser.">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-    rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.6/Sortable.min.js"></script>
@@ -33,11 +28,11 @@
   <div id="landing-screen" class="landing-screen">
     <div class="landing-card" data-mode="photo" role="button" tabindex="0" aria-label="Open photo tools">
       <div class="landing-title">Photo</div>
-      <div class="landing-description">Allows you to deal with photos.</div>
+      <div class="landing-description">Some basic things for image files.</div>
     </div>
     <div class="landing-card" data-mode="text" role="button" tabindex="0" aria-label="Open text tools">
       <div class="landing-title">Text</div>
-      <div class="landing-description">Allows to deal with text.</div>
+      <div class="landing-description">Clean up text that looks a bit weird.</div>
     </div>
   </div>
 
@@ -45,7 +40,7 @@
 
     <header class="header">
       <h1>Format Fixer</h1>
-      <p>Convert images, merge to PDF, and sanitize messy text — instantly, privately, right in your browser.</p>
+      <p>Small tools for converting images and cleaning text. It all happens in this browser tab.</p>
     </header>
 
     <nav class="tab-nav" role="tablist">
@@ -192,7 +187,7 @@
     <section class="tab-panel" id="panel-vector" role="tabpanel" aria-labelledby="tab-vector">
       <div class="card">
         <div class="card-title">🧩 Vector Converter</div>
-        <div class="card-subtitle">It allows the photo to look same and not get like stretched even when opened in every screen.</div>
+        <div class="card-subtitle">Turns an ordinary image into an SVG-ish vector file. Results can look a little strange.</div>
 
         <div class="drop-zone" id="vector-dropzone">
           <span class="dz-icon">📁</span>
