@@ -1,8 +1,4 @@
-<h1>
-  <div align="center">
-  Format-fixer
-</div>
-</h1>
+Format-fixer
 
 I used to get anxious about my private photos being leaked while trying to change my ID's format from png to pdf etc so i created this website that allows the user to do many type of changes with their <b>PHOTOS </b> and text without having to worry about their data being stolen as their data never leaves their browser for even once andbecause we use HTML,JS libraries it also makes the conversion ridiculously faster the user doesn't have to wait for the crappy servers to work.
 
@@ -32,26 +28,15 @@ Customize: Select from options for page size (A4, Letter, Legal), orientation, a
 3. Clean messy textOpen the Text Sanitizer tab.
 
 Paste your unclean text into the "Input" box on the left. Check or uncheck cleaning options like Strip AI/Markdown, Fix line breaks, Remove extra spaces, Normalize quotes & dashes. Your clean text appears instantly in the "Cleaned Output" box on the right. 
-Press "Copy Clean Text to Clipboard" to get your perfectly formatted text. 
+Press "Copy Clean Text to Clipboard" to get your perfectly formatted text.  Input (Left Pane)   Cleaned Output (Right Pane)
 
 Text Sanitization Example:
-<table>
-  <tr>
-    <th width="50%">📥 Input (Left Pane)</th>
-    <th width="50%">📤 Cleaned Output (Right Pane)</th>
-  </tr>
-  <tr>
-    <td>
-<pre><code>**Project Outline**
+-Input (Left Pane) :  **Project Outline**
 
-We are building a tool that    makes life easier. 
-— It features “zero-upload” privacy.</code></pre>
-    </td>
-    <td>
-<pre><code>Project Outline
+We are building a tool that    makes life easier.
+— It features “zero-upload” privacy.
+
+-Cleaned Output (Right Pane):Project Outline
 
 We are building a tool that makes life easier.
-- It features "zero-upload" privacy.</code></pre>
-    </td>
-  </tr>
-</table>
+- It features "zero-upload" privacy.
